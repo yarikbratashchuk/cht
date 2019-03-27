@@ -16,6 +16,8 @@ func readMessage(r io.Reader) cht.Message {
 	text, _ := reader.ReadString('\n')
 	text = strings.Replace(text, "\n", "", -1)
 
+	fmt.Print("\r\033[F")
+
 	return cht.Message{
 		Text: text,
 	}

@@ -55,7 +55,7 @@ func start(ctx *cli.Context) error {
 	<-d
 	cancel()
 
-	fmt.Println("disconnecting...")
+	fmt.Println("\rdisconnecting...")
 
 	return nil
 }
