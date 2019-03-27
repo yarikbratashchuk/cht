@@ -14,7 +14,7 @@ $ make install
 
 ### Usage
 
-#### Step 1. Run `cht-server` (in separate session)
+#### Step 1. Run `cht-server`
 
 ```bash
 $ cht-server -h
@@ -31,7 +31,7 @@ Help Options:
 $ cht-server # starting chat server
 ```
 
-#### Step 2. Use `cht` client
+#### Step 2. Use `cht` client (in separate session)
 
 ```bash
 $ cht -h 
