@@ -2,41 +2,58 @@ package mock
 
 import "github.com/yarikbratashchuk/cht/internal/cht"
 
-type storage struct{}
+type storage struct {
+	users map[string]uint64
+	rooms map[string]uint64
+
+	messages map[uint64][]cht.Message
+}
 
 func NewChatStorage() cht.Storage {
-	return storage{}
+	return storage{
+		users: make(map[string]uint64, 10),
+		rooms: make(map[string]uint64, 10),
+
+		messages: make(map[uint64][]cht.Message, 10),
+	}
 }
 
 func (s storage) RoomID(name string) (uint64, error) {
-	return 1, nil
+	id, ok := s.rooms[name]
+	if !ok {
+		id = newID(name)
+		s.rooms[name] = id
+	}
+	return id, nil
 }
 
 func (s storage) UserID(name string) (uint64, error) {
-	c := uint64(0)
-	for _, ch := range name {
-		c += uint64(ch)
+	id, ok := s.users[name]
+	if !ok {
+		id = newID(name)
+		s.users[name] = id
 	}
-	return c, nil
+	return id, nil
 }
 
-func (s storage) NewMessage(message cht.Message) (uint64, error) {
-	c := uint64(1)
-	for _, ch := range message.Text {
-		c += uint64(ch)
-	}
-	return c, nil
+func (s storage) NewMessage(m cht.Message) (uint64, error) {
+	mid := newID(m.Text + m.Author)
+	s.messages[m.RoomID] = append(s.messages[m.RoomID], m)
+	return mid, nil
 }
 
 func (s storage) LatestMsg(roomID uint64) ([]cht.Message, error) {
-	return []cht.Message{
-		cht.Message{
-			Author: "Jarvis",
-			Text:   "papa can you hear me",
-		},
-		cht.Message{
-			Author: "Caoimhe",
-			Text:   "hop hey lalaley",
-		},
-	}, nil
+	msgs, ok := s.messages[roomID]
+	if !ok || len(msgs) == 0 {
+		return []cht.Message{}, nil
+	}
+	return msgs, nil
+}
+
+func newID(s string) uint64 {
+	id := uint64(1)
+	for _, c := range s {
+		id += uint64(c)
+	}
+	return id
 }
