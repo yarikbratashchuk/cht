@@ -60,7 +60,7 @@ $ cht --nickname="yarik" start # join "random" chat room and start chating
 connecting to room random...
 Jarvis: papa can you hear me
 Caoimhe: hop hey lalaley
-
+  <- write your message here
 ```
 
 
