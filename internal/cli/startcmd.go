@@ -29,7 +29,7 @@ func start(ctx *cli.Context) error {
 	room := ctx.GlobalString(RoomFlag)
 	nickname := ctx.GlobalString(NicknameFlag)
 
-	fmt.Println("connecting...")
+	fmt.Printf("connecting to room %s...\n", room)
 
 	header := make(http.Header, 3)
 	// TODO: JWT based authentication

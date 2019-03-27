@@ -56,7 +56,11 @@ GLOBAL OPTIONS:
    --help, -h        show help
    --version, -v     print the version
 
-$ cht --nickname="yarik" start # join "randon" chat room and start chating
+$ cht --nickname="yarik" start # join "random" chat room and start chating
+connecting to room random...
+Jarvis: papa can you hear me
+Caoimhe: hop hey lalaley
+
 ```
 
 

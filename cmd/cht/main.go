@@ -2,7 +2,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 
@@ -42,9 +41,7 @@ func main() {
 		c.StartCmd,
 	}
 
-	fmt.Print("\n")
 	if err := app.Run(os.Args); err != nil {
 		log.Fatalln(err)
 	}
-	fmt.Print("\n")
 }
