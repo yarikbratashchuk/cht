@@ -2,7 +2,7 @@
 
 ### 👋 Hi there!
 
-**cht** is a cli chat tool for small teams.
+**cht** is a cli chat for small teams.
 
 ### Installation
 
@@ -14,7 +14,7 @@ $ make install
 
 ### Usage
 
-#### Step 1. Run `cht-server`
+#### Step 1. Run `cht-server` (in separate session)
 
 ```bash
 $ cht-server -h
