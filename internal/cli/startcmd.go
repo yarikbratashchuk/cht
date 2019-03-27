@@ -5,12 +5,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
 	"os/signal"
 
-	"github.com/apex/log"
 	"github.com/gorilla/websocket"
 	"github.com/urfave/cli"
 	"github.com/yarikbratashchuk/cht/internal/cht"
@@ -80,7 +80,7 @@ func write(ctx context.Context, w messageWriter, r io.Reader) {
 		case message := <-messageChan:
 			data, err := json.Marshal(message)
 			if err != nil {
-				log.Errorf("marshal: %v", err)
+				log.Printf("marshal: %v", err)
 				return
 			}
 			err = w.WriteMessage(
@@ -88,7 +88,7 @@ func write(ctx context.Context, w messageWriter, r io.Reader) {
 				data,
 			)
 			if err != nil {
-				log.Errorf("write: %v", err)
+				log.Printf("write: %v", err)
 				return
 			}
 		}
@@ -107,13 +107,13 @@ func read(ctx context.Context, r messageReader, w io.Writer) {
 		default:
 			_, message, err := r.ReadMessage()
 			if err != nil {
-				log.Errorf("recv: %v", err)
+				log.Printf("recv: %v", err)
 				return
 			}
 			var m cht.Message
 			err = json.Unmarshal(message, &m)
 			if err != nil {
-				log.Errorf("unmarshal: %v", err)
+				log.Printf("unmarshal: %v", err)
 				return
 			}
 
@@ -131,6 +131,6 @@ func shutdownConn(w messageWriter) {
 		),
 	)
 	if err != nil {
-		log.Errorf("write close: %v", err)
+		log.Printf("write close: %v", err)
 	}
 }
