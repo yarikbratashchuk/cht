@@ -78,6 +78,7 @@ func (c *Client) readPump() {
 			log.Errorf("unmarshal: %v", err)
 		}
 
+		m.Type = Text
 		m.RoomID = c.rID
 		m.UserID = c.uID
 		m.Author = c.nickname

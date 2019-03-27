@@ -7,7 +7,6 @@ import (
 	"io"
 	"strings"
 
-	"github.com/fatih/color"
 	"github.com/yarikbratashchuk/cht/internal/cht"
 )
 
@@ -26,9 +25,7 @@ func readMessage(r io.Reader) cht.Message {
 func printMessage(w io.Writer, m cht.Message) {
 	buf := new(bytes.Buffer)
 
-	buf.WriteString(color.New(color.FgCyan, color.Bold).Sprintf(m.Author))
-	buf.WriteString(": ")
-	buf.WriteString(m.Text)
+	buf.WriteString(m.String())
 	buf.WriteRune('\n')
 
 	fmt.Fprint(w, buf.String())

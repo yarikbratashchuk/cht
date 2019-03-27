@@ -63,6 +63,13 @@ func (h *Hub) Run() {
 				client.send <- m
 			}
 
+			h.publish <- Message{
+				Type: JoinRoom,
+
+				RoomID: client.rID,
+				Author: client.nickname,
+			}
+
 		case client := <-h.unregister:
 			log.Debugf("%s: unregister: %v", fn, client)
 			if rClients, ok := h.clients[client.rID]; !ok {
@@ -72,14 +79,22 @@ func (h *Hub) Run() {
 				close(client.send)
 			}
 
+			h.publish <- Message{
+				Type: LeaveRoom,
+
+				RoomID: client.rID,
+				Author: client.nickname,
+			}
+
 		case m := <-h.publish:
 			log.Debugf("%s: publish: %v", fn, m)
-			if err := h.pubsub.Publish(m); err != nil {
-				log.Errorf("%s: pubsub.Publish: %v", fn, err)
+			var err error
+			if m.ID, err = h.storage.NewMessage(m); err != nil {
+				log.Errorf("%s: storage.SaveMessage: %v", fn, err)
 				continue
 			}
-			if _, err := h.storage.NewMessage(m); err != nil {
-				log.Errorf("%s: storage.SaveMessage: %v", fn, err)
+			if err := h.pubsub.Publish(m); err != nil {
+				log.Errorf("%s: pubsub.Publish: %v", fn, err)
 				continue
 			}
 
