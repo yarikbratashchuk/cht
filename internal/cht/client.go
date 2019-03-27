@@ -27,8 +27,9 @@ var upgrader = websocket.Upgrader{
 
 // Client is a middleman between the websocket connection and the hub.
 type Client struct {
-	rID uint64 // room id
-	uID uint64 // user id
+	rID      uint64 // room id
+	uID      uint64 // user id
+	nickname string // user nickname
 
 	hub  *Hub
 	conn *websocket.Conn
@@ -76,6 +77,10 @@ func (c *Client) readPump() {
 		if err := json.Unmarshal(data, &m); err != nil {
 			log.Errorf("unmarshal: %v", err)
 		}
+
+		m.RoomID = c.rID
+		m.UserID = c.uID
+		m.Author = c.nickname
 
 		c.hub.publish <- m
 	}

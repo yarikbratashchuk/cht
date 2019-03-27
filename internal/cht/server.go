@@ -56,8 +56,9 @@ func (s Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	client := &Client{
-		uID: uID,
-		rID: rID,
+		uID:      uID,
+		rID:      rID,
+		nickname: nickname,
 
 		hub:  s.hub,
 		conn: conn,
