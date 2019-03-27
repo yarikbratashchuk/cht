@@ -2,8 +2,6 @@ package cht
 
 import "github.com/yarikbratashchuk/cht/fname"
 
-// Hub maintains the set of active clients and broadcasts messages to the
-// clients.
 type Hub struct {
 	// client connections grouped by room id
 	clients map[uint64]map[*Client]struct{}
@@ -88,7 +86,7 @@ func (h *Hub) Run() {
 		case m := <-h.subscribe:
 			log.Debugf("%s: subscribe: %v", fn, m)
 			if m.RoomID == 0 {
-				log.Errorf("%s: broadcast: m.RoomID=0", fn)
+				log.Errorf("%s: subscribe: m.RoomID=0", fn)
 				continue
 			}
 			for client := range h.clients[m.RoomID] {
