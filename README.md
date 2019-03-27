@@ -1,0 +1,70 @@
+## cht
+
+### 👋 Hi there!
+
+**cht** is a cli chat tool for small teams.
+
+### Installation
+
+Now you can only build from source:
+
+```bash
+$ make install
+```
+
+### Usage
+
+#### Step 1. Run `cht-server`
+
+```bash
+$ cht-server -h
+Usage:
+  cht-server [OPTIONS]
+
+Application Options:
+  -p, --port=     port to listen on (default: 9090)
+      --loglevel= log level for all subsystems {trace, debug, info, error, critical} (default: info)
+
+Help Options:
+  -h, --help      Show this help message
+
+$ cht-server # starting chat server
+```
+
+#### Step 2. Use `cht` client
+
+```bash
+$ cht -h 
+
+NAME:
+   cht - chat cli
+
+USAGE:
+   cht [global options] command [command options] [arguments...]
+
+VERSION:
+   1.0.0
+
+COMMANDS:
+     start    join the chat room and start sending and receiving messages
+     help, h  Shows a list of commands or help for one command
+
+GLOBAL OPTIONS:
+   --room value      room to join (default: "random")
+   --server value    server to connect (default: "127.0.0.1:9090")
+   --nickname value  your nickname (default: "noname")
+   --help, -h        show help
+   --version, -v     print the version
+
+$ cht --nickname="yarik" start # join "randon" chat room and start chating
+```
+
+
+That's it. Enjoy! ❤️
+
+
+----
+
+
+MIT License, 2019. Yarik Bratashchuk
+
