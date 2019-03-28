@@ -15,18 +15,16 @@ const (
 )
 
 type Message struct {
+	ID   uint64 `json:"-"`
 	Type MessageType
 
-	ID     uint64 `json:"-"`
-	UserID uint64 `json:"-"`
-	RoomID uint64 `json:"-"`
+	Text string
 
-	Author string `json:",omitempty"`
-	Text   string
+	Meta *ClientMeta
 }
 
 func (m *Message) String() string {
-	a := color.New(color.FgCyan, color.Bold).Sprintf(m.Author)
+	a := color.New(color.FgCyan, color.Bold).Sprintf(m.Meta.UserNickname)
 
 	switch m.Type {
 	case JoinRoom:

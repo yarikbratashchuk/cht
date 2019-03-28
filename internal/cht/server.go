@@ -42,6 +42,7 @@ func (s Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		write500(w)
 		return
 	}
+
 	uID, err := s.hub.storage.UserID(nickname)
 	if err != nil {
 		log.Errorf("%s: storage.UserID: %v", fn, err)
@@ -55,10 +56,15 @@ func (s Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, fmt.Sprintf("upgrade: %s", err), 500)
 		return
 	}
+
+	metadata := &ClientMeta{
+		RoomID:       rID,
+		UserID:       uID,
+		UserNickname: nickname,
+	}
+
 	client := &Client{
-		uID:      uID,
-		rID:      rID,
-		nickname: nickname,
+		meta: metadata,
 
 		hub:  s.hub,
 		conn: conn,

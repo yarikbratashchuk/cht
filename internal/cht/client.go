@@ -25,11 +25,15 @@ var upgrader = websocket.Upgrader{
 	WriteBufferSize: 1024,
 }
 
+type ClientMeta struct {
+	RoomID       uint64
+	UserID       uint64
+	UserNickname string
+}
+
 // Client is a middleman between the websocket connection and the hub.
 type Client struct {
-	rID      uint64 // room id
-	uID      uint64 // user id
-	nickname string // user nickname
+	meta *ClientMeta
 
 	hub  *Hub
 	conn *websocket.Conn
@@ -78,10 +82,8 @@ func (c *Client) readPump() {
 			log.Errorf("unmarshal: %v", err)
 		}
 
+		m.Meta = c.meta
 		m.Type = Text
-		m.RoomID = c.rID
-		m.UserID = c.uID
-		m.Author = c.nickname
 
 		c.hub.publish <- m
 	}

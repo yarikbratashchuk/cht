@@ -48,17 +48,21 @@ func (h *Hub) Run() {
 		select {
 		case client := <-h.register:
 			log.Debugf("%s: register: %v", fn, client)
-			_, ok := h.clients[client.rID]
-			if !ok {
-				h.clients[client.rID] = make(map[*Client]struct{})
-			}
-			h.clients[client.rID][client] = struct{}{}
 
-			ms, err := h.storage.LatestMsg(client.rID)
+			rID := client.meta.RoomID
+
+			_, ok := h.clients[rID]
+			if !ok {
+				h.clients[rID] = make(map[*Client]struct{})
+			}
+			h.clients[rID][client] = struct{}{}
+
+			ms, err := h.storage.LatestMsg(rID)
 			if err != nil {
 				log.Errorf("%s: storage.LatestMsg: %v", fn, err)
 				continue
 			}
+
 			for _, m := range ms {
 				client.send <- m
 			}
@@ -66,28 +70,30 @@ func (h *Hub) Run() {
 			h.publish <- Message{
 				Type: JoinRoom,
 
-				RoomID: client.rID,
-				Author: client.nickname,
+				Meta: client.meta,
 			}
 
 		case client := <-h.unregister:
 			log.Debugf("%s: unregister: %v", fn, client)
-			if rClients, ok := h.clients[client.rID]; !ok {
+
+			rID := client.meta.RoomID
+
+			if roomClients, ok := h.clients[rID]; !ok {
 				log.Errorf("%s: unregister: invalid client", fn)
 			} else {
-				delete(rClients, client)
+				delete(roomClients, client)
 				close(client.send)
 			}
 
 			h.publish <- Message{
 				Type: LeaveRoom,
 
-				RoomID: client.rID,
-				Author: client.nickname,
+				Meta: client.meta,
 			}
 
 		case m := <-h.publish:
 			log.Debugf("%s: publish: %v", fn, m)
+
 			var err error
 			if m.ID, err = h.storage.NewMessage(m); err != nil {
 				log.Errorf("%s: storage.SaveMessage: %v", fn, err)
@@ -100,11 +106,13 @@ func (h *Hub) Run() {
 
 		case m := <-h.subscribe:
 			log.Debugf("%s: subscribe: %v", fn, m)
-			if m.RoomID == 0 {
+
+			if m.Meta.RoomID == 0 {
 				log.Errorf("%s: subscribe: m.RoomID=0", fn)
 				continue
 			}
-			for client := range h.clients[m.RoomID] {
+
+			for client := range h.clients[m.Meta.RoomID] {
 				client.send <- m
 			}
 

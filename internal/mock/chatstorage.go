@@ -37,8 +37,9 @@ func (s storage) UserID(name string) (uint64, error) {
 }
 
 func (s storage) NewMessage(m cht.Message) (uint64, error) {
-	mid := newID(m.Text + m.Author)
-	s.messages[m.RoomID] = append(s.messages[m.RoomID], m)
+	rID := m.Meta.RoomID
+	mid := newID(m.Text + m.Meta.UserNickname)
+	s.messages[rID] = append(s.messages[rID], m)
 	return mid, nil
 }
 
@@ -46,6 +47,9 @@ func (s storage) LatestMsg(roomID uint64) ([]cht.Message, error) {
 	msgs, ok := s.messages[roomID]
 	if !ok || len(msgs) == 0 {
 		return []cht.Message{}, nil
+	}
+	if len(msgs) > 10 {
+		msgs = msgs[len(msgs)-6:]
 	}
 	return msgs, nil
 }
