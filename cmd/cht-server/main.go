@@ -46,7 +46,7 @@ func main() {
 	setupLog(os.Stderr, conf.LogLevel)
 
 	storage := mock.NewChatStorage()
-	pubsub := cht.NewPubSub()
+	pubsub := mock.NewPubSub()
 	hub := cht.NewHub(pubsub, storage)
 
 	go hub.Run()

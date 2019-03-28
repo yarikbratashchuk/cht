@@ -12,13 +12,13 @@ type Hub struct {
 	publish   chan Message
 	subscribe chan Message
 
-	pubsub  *PubSub
+	pubsub  PubSub
 	storage Storage
 
 	done chan struct{}
 }
 
-func NewHub(pubsub *PubSub, storage Storage) *Hub {
+func NewHub(pubsub PubSub, storage Storage) *Hub {
 	return &Hub{
 		clients: make(map[uint64]map[*Client]struct{}),
 
@@ -41,7 +41,7 @@ func (h *Hub) Run() {
 	log.Infof("starting %s", fn)
 	defer log.Infof("shutting down %s", fn)
 
-	go h.pubsub.Run(h.subscribe)
+	go h.pubsub.Subscribe(h.subscribe)
 	defer h.pubsub.Stop()
 
 	for {
