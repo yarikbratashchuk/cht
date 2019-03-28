@@ -7,7 +7,7 @@
 ### Demo
 
 <p align="left">
-<img width="400" src='https://user-images.githubusercontent.com/12980380/55091614-db4ded80-50b9-11e9-854a-e2b1ccf6abf9.gif' alt="cht usage demo" />
+<img width="700" src='https://user-images.githubusercontent.com/12980380/55159801-87e7a800-516a-11e9-8a82-ea32f75d96b4.gif' alt="cht usage demo" />
 </p>
 
 ### Installation
