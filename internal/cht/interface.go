@@ -7,3 +7,10 @@ type Storage interface {
 	NewMessage(message Message) (uint64, error)
 	LatestMsg(roomID uint64) ([]Message, error)
 }
+
+type PubSub interface {
+	Publish(Message) error
+	Subscribe(chan<- Message)
+
+	Stop()
+}
