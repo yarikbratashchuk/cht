@@ -25,6 +25,7 @@ func readMessage(r io.Reader) cht.Message {
 func printMessage(w io.Writer, m cht.Message) {
 	buf := new(bytes.Buffer)
 
+	buf.WriteRune('\r')
 	buf.WriteString(m.String())
 	buf.WriteRune('\n')
 

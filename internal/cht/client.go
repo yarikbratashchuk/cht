@@ -67,6 +67,9 @@ func (c *Client) readPump() {
 	for {
 		_, data, err := c.conn.ReadMessage()
 		if err != nil {
+			if websocket.IsCloseError(err) {
+				continue
+			}
 			if websocket.IsUnexpectedCloseError(
 				err,
 				websocket.CloseGoingAway,

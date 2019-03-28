@@ -10,6 +10,7 @@ import (
 	"net/url"
 	"os"
 	"os/signal"
+	"time"
 
 	"github.com/gorilla/websocket"
 	"github.com/urfave/cli"
@@ -46,14 +47,18 @@ func start(ctx *cli.Context) error {
 	}
 	defer conn.Close()
 
-	cx, cancel := context.WithCancel(context.Background())
-	go read(cx, conn, os.Stdout)
-	go write(cx, conn, os.Stdin)
+	rCtx, cancelRead := context.WithCancel(context.Background())
+	go read(rCtx, conn, os.Stdout)
+
+	wCtx, cancelWrite := context.WithCancel(context.Background())
+	go write(wCtx, conn, os.Stdin)
 
 	d := make(chan os.Signal, 1)
 	signal.Notify(d, os.Interrupt)
 	<-d
-	cancel()
+
+	cancelRead()
+	cancelWrite()
 
 	fmt.Println("\rdisconnecting...")
 
@@ -66,9 +71,18 @@ type messageWriter interface {
 
 func write(ctx context.Context, w messageWriter, r io.Reader) {
 	messageChan := make(chan cht.Message)
+
+	ticker := time.NewTicker(50 * time.Millisecond)
+	defer func() { ticker.Stop() }()
+
 	go func() {
 		for {
-			messageChan <- readMessage(r)
+			select {
+			case <-ctx.Done():
+				return
+			case <-ticker.C:
+				messageChan <- readMessage(r)
+			}
 		}
 	}()
 
@@ -100,11 +114,14 @@ type messageReader interface {
 }
 
 func read(ctx context.Context, r messageReader, w io.Writer) {
+	ticker := time.NewTicker(50 * time.Millisecond)
+	defer func() { ticker.Stop() }()
+
 	for {
 		select {
 		case <-ctx.Done():
 			return
-		default:
+		case <-ticker.C:
 			_, message, err := r.ReadMessage()
 			if err != nil {
 				log.Printf("recv: %v", err)
